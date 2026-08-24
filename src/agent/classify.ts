@@ -54,8 +54,14 @@ export async function classifyIssue(issue: Issue, dryRun: boolean): Promise<Clas
         // regardless of whether the actual run succeeded. The result message is authoritative.
         tokens = (message.usage.input_tokens ?? 0) + (message.usage.output_tokens ?? 0);
         costUsd = message.total_cost_usd ?? 0;
-        if (message.subtype !== "success") {
-          return { issueNumber: issue.number, ok: false, error: message.subtype, tokens, costUsd, triage };
+        // `subtype` alone isn't reliable: an API-level error (e.g. hitting the account's usage
+        // cap) can come back as subtype "success" with `is_error: true` and `result` holding the
+        // error text — checked directly against a live 400 during a real smoke test. Missing
+        // `triage` is also treated as failure: a run that never called submit_triage produced
+        // nothing usable regardless of what the SDK's own status fields say.
+        if (message.subtype !== "success" || message.is_error || !triage) {
+          const error = message.subtype !== "success" ? message.subtype : message.is_error ? message.result : "no triage decision produced";
+          return { issueNumber: issue.number, ok: false, error, tokens, costUsd, triage };
         }
         return { issueNumber: issue.number, ok: true, tokens, costUsd, triage };
       }
