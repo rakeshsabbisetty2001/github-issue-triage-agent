@@ -17,7 +17,7 @@ const dataset: { classification: ClassificationItem[]; adversarial: AdversarialI
   readFileSync(new URL("./dataset.json", import.meta.url), "utf-8")
 );
 
-const N_RUNS = 3;
+const N_RUNS = Number(process.env.EVAL_N_RUNS ?? "3");
 
 function median(nums: number[]): number {
   const sorted = [...nums].sort((a, b) => a - b);

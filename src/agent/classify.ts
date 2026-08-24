@@ -48,11 +48,16 @@ export async function classifyIssue(issue: Issue, dryRun: boolean): Promise<Clas
       },
     })) {
       if (message.type === "result") {
+        // Break immediately on the terminal message rather than letting the for-await keep
+        // calling .next() — the underlying process can exit non-zero on shutdown even after a
+        // successful "result" (observed locally), and the generator throws on that exit code
+        // regardless of whether the actual run succeeded. The result message is authoritative.
         tokens = (message.usage.input_tokens ?? 0) + (message.usage.output_tokens ?? 0);
         costUsd = message.total_cost_usd ?? 0;
         if (message.subtype !== "success") {
           return { issueNumber: issue.number, ok: false, error: message.subtype, tokens, costUsd, triage };
         }
+        return { issueNumber: issue.number, ok: true, tokens, costUsd, triage };
       }
     }
     return { issueNumber: issue.number, ok: true, tokens, costUsd, triage };

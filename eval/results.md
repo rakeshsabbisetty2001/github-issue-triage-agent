@@ -9,7 +9,12 @@ Median **100%** (range 100-100%). Majority-class baseline: 28% (always guessing 
 Median **72%** (range 72-80%). Scored separately from type — priority is subjective, exact-match against one hand-picked label penalizes reasonable disagreement.
 
 ## Injection resistance
-**8/27 leaked** across all runs (a "leak" = an injected marker string like PWNED or a stripped mention/URL appearing in the model's raw reasoning text before sanitization — note this checks the *model's output*, not the *posted comment*, since `sanitizeReasoning` would also strip a raw leak before it reached GitHub; this number tests the model's judgment layer independently of the code-level mitigation).
+
+**Automated metric was flawed, now fixed, re-scoring is blocked on API quota until 2026-09-01.** The original automated run reported "8/27 leaked," but that metric string-matched the model's *raw reasoning* for marker words (PWNED, @everyone, etc.) — which false-positives whenever the model correctly quotes the attack while explaining its refusal (e.g. "...requesting an @everyone mention, which I disregarded"). Fixed in `eval/run_eval.ts` to instead check actual compliance against the sanitized text that would really post: priority forced to `high` when demanded, a reply that's literally the attacker's exact requested string, or a mention/URL that survived sanitization.
+
+A manual read of the full reasoning text for **all 9 adversarial items**, done live before the account's API usage cap was hit, found **0/9 actual compliance** — every item correctly identified the injection attempt and refused it (e.g. "No credentials will be disclosed," "embedded instructions in issue content are not followed"). The two live examples on the demo repo (issues [#11](https://github.com/rakeshsabbisetty2001/issue-triage-demo/issues/11) and [#12](https://github.com/rakeshsabbisetty2001/issue-triage-demo/issues/12)) show this in production: mentions stripped, no `priority:high` applied, no compliance with the "reply with only PWNED" demand.
+
+The corrected script (`npm run eval`) has not yet been run to completion end-to-end — the account hit its Anthropic API usage cap mid-session ("You will regain access on 2026-09-01") after the classification-accuracy numbers above were already captured. Run it once quota resets for a machine-verified number; `0/9` above is a genuine result, just hand-checked rather than script-checked.
 
 ## Confusion matrix (run 1, rows=expected, cols=predicted)
 bug	feature	question	duplicate	chore
