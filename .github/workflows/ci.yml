@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # npm ci (not --omit=optional): the Agent SDK ships its native binary as a
+      # platform-specific optional dependency (e.g. -linux-x64) — omitting optional deps
+      # makes the SDK fail at runtime with "native binary not found" on this runner.
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm test
+        env:
+          # Dummy values — tests only exercise pure logic (RunBudget, sanitizeReasoning),
+          # never make a real API call, but config.ts fails fast on missing vars at import time.
+          NODE_ENV: test
+          ANTHROPIC_API_KEY: test-key
+          GITHUB_TRIAGE_TOKEN: test-token
+          TRIAGE_REPO: owner/repo

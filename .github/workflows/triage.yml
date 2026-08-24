@@ -1,0 +1,24 @@
+name: Triage
+
+on:
+  schedule:
+    # Daily, not tight — GitHub queues/drops scheduled runs under load, so a tight interval
+    # isn't a reliable "it ran" signal anyway. workflow_dispatch below is the actual demo trigger.
+    - cron: "0 13 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run triage
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TRIAGE_TOKEN: ${{ secrets.GITHUB_TRIAGE_TOKEN }}
+          TRIAGE_REPO: rakeshsabbisetty2001/issue-triage-demo
+          DRY_RUN: "false"
