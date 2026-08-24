@@ -24,5 +24,5 @@ jobs:
           # never make a real API call, but config.ts fails fast on missing vars at import time.
           NODE_ENV: test
           ANTHROPIC_API_KEY: test-key
-          GITHUB_TRIAGE_TOKEN: test-token
+          TRIAGE_GITHUB_TOKEN: test-token
           TRIAGE_REPO: owner/repo

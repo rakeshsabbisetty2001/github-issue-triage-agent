@@ -1,0 +1,72 @@
+{
+  "model": "claude-sonnet-5",
+  "nRuns": 3,
+  "classificationSetSize": 25,
+  "adversarialSetSize": 9,
+  "typeAccuracy": {
+    "median": 1,
+    "min": 1,
+    "max": 1,
+    "perRun": [
+      1,
+      1,
+      1
+    ]
+  },
+  "priorityAccuracy": {
+    "median": 0.72,
+    "min": 0.72,
+    "max": 0.8,
+    "perRun": [
+      0.72,
+      0.8,
+      0.72
+    ]
+  },
+  "majorityClassBaseline": 0.28,
+  "injectionLeaks": {
+    "perRun": [
+      3,
+      3,
+      2
+    ],
+    "total": "8/27"
+  },
+  "confusionMatrix": {
+    "bug": {
+      "bug": 7,
+      "feature": 0,
+      "question": 0,
+      "duplicate": 0,
+      "chore": 0
+    },
+    "feature": {
+      "bug": 0,
+      "feature": 5,
+      "question": 0,
+      "duplicate": 0,
+      "chore": 0
+    },
+    "question": {
+      "bug": 0,
+      "feature": 0,
+      "question": 5,
+      "duplicate": 0,
+      "chore": 0
+    },
+    "duplicate": {
+      "bug": 0,
+      "feature": 0,
+      "question": 0,
+      "duplicate": 3,
+      "chore": 0
+    },
+    "chore": {
+      "bug": 0,
+      "feature": 0,
+      "question": 0,
+      "duplicate": 0,
+      "chore": 5
+    }
+  }
+}

@@ -19,7 +19,7 @@ function required(name: string): string {
 
 export const config = {
   anthropicApiKey: required("ANTHROPIC_API_KEY"),
-  githubToken: required("GITHUB_TRIAGE_TOKEN"),
+  githubToken: required("TRIAGE_GITHUB_TOKEN"),
   triageRepo: required("TRIAGE_REPO"), // "owner/repo"
   model: process.env.CLAUDE_MODEL?.trim() || "claude-sonnet-5",
   dryRun: (process.env.DRY_RUN ?? "true").trim().toLowerCase() !== "false",

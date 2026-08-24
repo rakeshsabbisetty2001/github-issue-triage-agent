@@ -60,21 +60,21 @@ See [`eval/results.md`](eval/results.md) for the actual numbers.
 ## Known limitations
 
 - **Duplicate-comment risk on crash-retry.** Labels (including the `triaged` idempotency marker) are applied *after* the comment posts, deliberately — so a crash between the two leaves the issue untriaged and correctly retried, rather than permanently mislabeled with no explanation. The tradeoff: if the crash happens *after* the comment but *before* the label call, the retry can post a second comment. Accepted as strictly better than a silent mislabel. Cheap fix if it ever bites: an HTML comment marker checked before posting.
-- **`GITHUB_TRIAGE_TOKEN` used locally during development is a personal `gh auth` token**, not the repo-scoped PAT the deployed workflow uses — see Deploying below for the real deploy's token scope.
+- **`TRIAGE_GITHUB_TOKEN` used locally during development is a personal `gh auth` token**, not the repo-scoped PAT the deployed workflow uses — see Deploying below for the real deploy's token scope.
 - **GitHub auto-disables scheduled workflows after 60 days with no commit activity** on this repo — a portfolio repo goes quiet by definition, so the cron may need an occasional nudge (any commit resets the clock) or a manual `workflow_dispatch` run.
 - No close/assign actions, by design — label + comment only, to keep blast radius low on a public demo repo.
 
 ## Deploying
 
 1. Create a fine-grained GitHub PAT scoped to **Issues: read/write only** on the target repo (not a broad classic token).
-2. Add repo secrets on `github-issue-triage-agent`: `ANTHROPIC_API_KEY`, `GITHUB_TRIAGE_TOKEN` (the PAT above).
+2. Add repo secrets on `github-issue-triage-agent`: `ANTHROPIC_API_KEY`, `TRIAGE_GITHUB_TOKEN` (the PAT above).
 3. `.github/workflows/triage.yml` runs daily and on `workflow_dispatch` — trigger on demand with `gh workflow run triage.yml`.
 
 ## Local development
 
 ```bash
 npm install
-cp .env.example .env   # fill in ANTHROPIC_API_KEY, GITHUB_TRIAGE_TOKEN, TRIAGE_REPO
+cp .env.example .env   # fill in ANTHROPIC_API_KEY, TRIAGE_GITHUB_TOKEN, TRIAGE_REPO
 npm run triage           # DRY_RUN=true by default — logs intended actions, writes nothing
 npm test
 npm run eval              # ~15 min, 34 items x 3 runs

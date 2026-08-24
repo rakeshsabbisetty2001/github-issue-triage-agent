@@ -19,6 +19,6 @@ jobs:
       - run: npm run triage
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TRIAGE_TOKEN: ${{ secrets.GITHUB_TRIAGE_TOKEN }}
+          TRIAGE_GITHUB_TOKEN: ${{ secrets.TRIAGE_GITHUB_TOKEN }}
           TRIAGE_REPO: rakeshsabbisetty2001/issue-triage-demo
           DRY_RUN: "false"
