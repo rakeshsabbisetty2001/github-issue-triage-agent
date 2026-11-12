@@ -10,7 +10,15 @@ on:
 jobs:
   triage:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write # for the keepalive step below
     steps:
+      # GitHub disables scheduled workflows after 60 days without a commit (it did, 2026-10-25).
+      # Re-enabling an enabled workflow resets that clock.
+      - run: gh api -X PUT repos/${{ github.repository }}/actions/workflows/triage.yml/enable
+        env:
+          GH_TOKEN: ${{ github.token }}
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:

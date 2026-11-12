@@ -61,7 +61,7 @@ See [`eval/results.md`](eval/results.md) for the actual numbers.
 
 - **Duplicate-comment risk on crash-retry.** Labels (including the `triaged` idempotency marker) are applied *after* the comment posts, deliberately — so a crash between the two leaves the issue untriaged and correctly retried, rather than permanently mislabeled with no explanation. The tradeoff: if the crash happens *after* the comment but *before* the label call, the retry can post a second comment. Accepted as strictly better than a silent mislabel. Cheap fix if it ever bites: an HTML comment marker checked before posting.
 - **`TRIAGE_GITHUB_TOKEN` used locally during development is a personal `gh auth` token**, not the repo-scoped PAT the deployed workflow uses — see Deploying below for the real deploy's token scope.
-- **GitHub auto-disables scheduled workflows after 60 days with no commit activity** on this repo — a portfolio repo goes quiet by definition, so the cron may need an occasional nudge (any commit resets the clock) or a manual `workflow_dispatch` run.
+- **GitHub auto-disables scheduled workflows after 60 days with no commit activity** on this repo — a portfolio repo goes quiet by definition, and it did disable this one on 2026-10-25. The workflow's first step now re-enables itself on every run, which resets the clock.
 - No close/assign actions, by design — label + comment only, to keep blast radius low on a public demo repo.
 
 ## Deploying
